@@ -3,7 +3,7 @@ using UnityEngine;
 public class GridBoard : MonoBehaviour
 {
     public int width = 8, height = 8;
-    public float cellX = 0.1f, cellZ = 0.1f;   // placeholder, sesuaikan dengan garis Gizmo
+    public float cellX = 0.1f, cellZ = 0.1f;   //sesuaikan dengan garis Gizmo
     Piece[,] cells;
 
     void Awake() => cells = new Piece[width, height];
@@ -23,7 +23,6 @@ public class GridBoard : MonoBehaviour
     {
         if (!CanPlace(p, anchor)) return false;
 
-        // bersihkan posisi lama piece ini (kalau ada)
         for (int x = 0; x < width; x++)
             for (int y = 0; y < height; y++)
                 if (cells[x, y] == p) cells[x, y] = null;

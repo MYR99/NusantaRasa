@@ -13,13 +13,13 @@ public class GridTest : MonoBehaviour
     {
         board = GetComponent<GridBoard>();
 
-        Spawn(ShapeType.Block,  new Vector2Int(2, 2));   // harus berhasil
-        Spawn(ShapeType.Domino, new Vector2Int(0, 0));   // harus berhasil
-        lPiece = Spawn(ShapeType.L, lAnchor);            // harus berhasil
-        Spawn(ShapeType.Single, new Vector2Int(7, 7));   // harus berhasil 
+        Spawn(ShapeType.Block,  new Vector2Int(2, 2));   // harus berhasil✅
+        Spawn(ShapeType.Domino, new Vector2Int(0, 0));   // harus berhasil✅
+        lPiece = Spawn(ShapeType.L, lAnchor);            // harus berhasil✅
+        Spawn(ShapeType.Single, new Vector2Int(7, 7));   // harus berhasil✅
 
-        Spawn(ShapeType.Block,  new Vector2Int(7, 7));   // harus GAGAL: keluar papan
-        Spawn(ShapeType.Single, new Vector2Int(3, 3));   // harus GAGAL: menimpa block
+        Spawn(ShapeType.Block,  new Vector2Int(7, 7));   // harus GAGAL: keluar papan✅
+        Spawn(ShapeType.Single, new Vector2Int(3, 3));   // harus GAGAL: menimpa block✅
     }
 
     Piece Spawn(ShapeType type, Vector2Int anchor)
@@ -37,7 +37,7 @@ public class GridTest : MonoBehaviour
         return p;
     }
 
-    // Saat Play: klik kanan header komponen GridTest > Rotate L
+    // Saat Play: klik kanan header komponen GridTest > Rotate L✅
     [ContextMenu("Rotate L")]
     void RotateL()
     {

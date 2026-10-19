@@ -27,7 +27,7 @@ public class Piece : MonoBehaviour
         Rebuild();
     }
 
-    // geser supaya offset minimum selalu (0,0)
+    //offset minimum selalu (0,0)
     void Normalize()
     {
         Vector2Int m = Min();
