@@ -129,7 +129,7 @@ public class GameUI : MonoBehaviour
             sotoNameText.text = cfg.sotoName;
             compositionText.text = cfg.composition;
             recipeText.text = cfg.recipe;
-            nextButtonLabel.text = game.IsLastLevel ? "Main lagi dari awal" : "Level berikutnya";
+            nextButtonLabel.text = game.HasNextLevel ? "Level berikutnya" : "Pilih level";
         }
     }
 

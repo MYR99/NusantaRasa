@@ -8,8 +8,13 @@ public class GameManager : MonoBehaviour
 
     public GameObject cellPrefab;
     public Material material;
-    public List<LevelConfig> levels = new List<LevelConfig>();
+    public List<LevelConfig> levels = new List<LevelConfig>();   // level di scene ini
     public float trayZ = -3f;
+
+    [Header("Scene ini")]
+    public int globalOffset = 0;           // nomor global level pertama di scene ini (Stage 1-3 = 0, Stage 4-5 = 3, Stage 6-7 = 5)
+    public bool startImmediately = true;
+    public int debugStartLevel = -1;       // -1 = pakai level dari pemilih level; isi angka untuk tes langsung
 
     public State state { get; private set; } = State.Menu;
     public bool IsPaused { get; private set; }
@@ -18,9 +23,10 @@ public class GameManager : MonoBehaviour
     // untuk UI
     public event System.Action OnChanged;
     public LevelConfig CurrentConfig => cfg;
-    public int LevelNumber => levelIndex + 1;
-    public int LevelTotal => Mathf.Max(1, levels.Count);
-    public bool IsLastLevel => levelIndex >= LevelTotal - 1;
+    public int LevelNumber => globalOffset + levelIndex + 1;
+    public int LevelTotal => StageCatalog.Count;
+    public bool HasNextLevel =>
+        levelIndex + 1 < levels.Count || StageCatalog.IsAvailable(globalOffset + levelIndex + 1);
     public int RefreshesLeft => refreshesLeft;
     public bool CanRefresh => Playing && refreshesLeft > 0 && unseen.Count > 0;
     public float Progress => board != null && board.TotalCells > 0
@@ -28,7 +34,7 @@ public class GameManager : MonoBehaviour
 
     GridBoard board;
     LevelConfig fallback, cfg;
-    int levelIndex;
+    int levelIndex;                         // indeks lokal di scene ini
     Piece[] tray = new Piece[0];
     List<ShapeType> unseen = new List<ShapeType>();
     int refreshesLeft;
@@ -44,7 +50,13 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         board.OnPlaced += HandlePlaced;
-        OnChanged?.Invoke();   // tampilkan menu utama
+
+        if (startImmediately)
+        {
+            int global = debugStartLevel >= 0 ? debugStartLevel : GameSession.SelectedLevel;
+            StartLevelAt(global - globalOffset);
+        }
+        else OnChanged?.Invoke();
     }
 
     void Update()
@@ -54,9 +66,9 @@ public class GameManager : MonoBehaviour
 
     // ---------- alur game ----------
 
-    public void StartLevelAt(int index)
+    public void StartLevelAt(int localIndex)
     {
-        levelIndex = Mathf.Clamp(index, 0, LevelTotal - 1);
+        levelIndex = Mathf.Clamp(localIndex, 0, Mathf.Max(1, levels.Count) - 1);
         StartLevel();
     }
 
@@ -93,22 +105,26 @@ public class GameManager : MonoBehaviour
 
     public void NextLevel()
     {
-        levelIndex = IsLastLevel ? 0 : levelIndex + 1;
-        StartLevel();
+        int nextGlobal = globalOffset + levelIndex + 1;
+
+        if (levelIndex + 1 < levels.Count)               // masih ada level di scene ini
+        {
+            levelIndex++;
+            GameSession.SelectedLevel = nextGlobal;
+            StartLevel();
+        }
+        else if (StageCatalog.IsAvailable(nextGlobal))   // level berikutnya ada di scene lain
+        {
+            GameSession.SelectedLevel = nextGlobal;
+            SceneLoader.Load(StageCatalog.SceneFor(nextGlobal));
+        }
+        else                                             // tidak ada lagi: kembali ke pemilih level
+        {
+            SceneLoader.Load(SceneNames.LevelSelect);
+        }
     }
 
-    public void ReturnToMenu()
-    {
-        foreach (var p in FindObjectsByType<Piece>(FindObjectsSortMode.None))
-            Destroy(p.gameObject);
-
-        board.Clear();
-        tray = new Piece[0];
-        unseen.Clear();
-        IsPaused = false;
-        state = State.Menu;
-        OnChanged?.Invoke();
-    }
+    public void ReturnToMenu() => SceneLoader.Load(SceneNames.MainMenu);
 
     // ---------- pause ----------
 
@@ -179,7 +195,7 @@ public class GameManager : MonoBehaviour
         if (board.IsFull)
         {
             state = State.Won;
-            SaveSystem.Unlock(levelIndex + 1);   // buka level berikutnya
+            SaveSystem.Unlock(globalOffset + levelIndex + 1);   // buka level global berikutnya
             return;
         }
 
