@@ -7,7 +7,6 @@ public class GameUI : MonoBehaviour
     public GameManager game;
 
     [Header("HUD")]
-    public GameObject hudGroup;
     public TMP_Text levelText;
     public RectTransform progressFill;   // anak ProgressBar, anchor min (0,0) max (0,1)
     public TMP_Text progressText;
@@ -17,11 +16,15 @@ public class GameUI : MonoBehaviour
 
     [Header("Panel Pause")]
     public GameObject pausePanel;
-    public TMP_Text pauseLevelText;
-    public Button resumeButton;          // tombol "Next" (panah kanan) di PausePanel
+    public TMP_Text pauseLevelText;      // teks di dalam CurrentLevel (BUKAN Title)
+    public Button resumeButton;
     public Button pauseRestartButton;
     public Button pauseMainMenuButton;
     public Slider volumeSlider;
+    public Button soundButton;       // objek "Sound" (ikon musik)
+    public Image soundIcon;           // Image pada objek yang sama
+    public Sprite iconSoundOn;
+    public Sprite iconSoundOff;
 
     [Header("Panel Menang")]
     public GameObject winPanel;
@@ -35,24 +38,17 @@ public class GameUI : MonoBehaviour
     public GameObject losePanel;
     public Button retryButton;
 
-    [Header("Menu Utama")]
-    public GameObject mainMenuPanel;
-    public Button playButton;
-    public Button quitButton;
-
-    [Header("Pilih Level")]
-    public GameObject levelSelectPanel;
-    public Button[] levelButtons;        // urut: level 1 sampai 7
-    public Button levelBackButton;
-
-    bool inLevelSelect;
-
     void Awake()
     {
+        // pemeriksaan dasar: kalau salah satu hilang, UI tidak akan bisa diklik
+        if (FindFirstObjectByType<UnityEngine.EventSystems.EventSystem>() == null)
+            Debug.LogError("Tidak ada EventSystem di scene ini: UI tidak akan bisa diklik.");
+        if (GetComponent<GraphicRaycaster>() == null)
+            Debug.LogError("Canvas tidak punya Graphic Raycaster: UI tidak akan bisa diklik.");
+
         // berlangganan di Awake supaya event pertama dari GameManager.Start tidak terlewat
         game.OnChanged += Redraw;
 
-        // HUD dan panel
         refreshButton.onClick.AddListener(game.Refresh);
         pauseButton.onClick.AddListener(game.TogglePause);
         resumeButton.onClick.AddListener(() => game.SetPaused(false));
@@ -61,30 +57,43 @@ public class GameUI : MonoBehaviour
         nextButton.onClick.AddListener(game.NextLevel);
         retryButton.onClick.AddListener(game.StartLevel);
 
-        // menu utama dan pemilih level
-        playButton.onClick.AddListener(() => { inLevelSelect = true; Redraw(); });
-        levelBackButton.onClick.AddListener(() => { inLevelSelect = false; Redraw(); });
-        quitButton.onClick.AddListener(Quit);
-
-        for (int i = 0; i < levelButtons.Length; i++)
-        {
-            int index = i;   // salin nilai i untuk lambda
-            levelButtons[i].onClick.AddListener(() => game.StartLevelAt(index));
-            var label = levelButtons[i].GetComponentInChildren<TMP_Text>();
-            if (label != null) label.text = (i + 1).ToString();
-        }
-
-        // volume
+                // suara
         volumeSlider.minValue = 0f;
         volumeSlider.maxValue = 1f;
         volumeSlider.wholeNumbers = false;
         volumeSlider.SetValueWithoutNotify(SaveSystem.Volume);
-        AudioListener.volume = SaveSystem.Volume;
         volumeSlider.onValueChanged.AddListener(v =>
         {
-            AudioListener.volume = v;
             SaveSystem.Volume = v;
+            if (v > 0.001f) SaveSystem.Muted = false;   // geser ke atas 0 = suara nyala lagi
+            RefreshAudio();
         });
+
+        if (soundButton != null)
+            soundButton.onClick.AddListener(() =>
+            {
+                SaveSystem.Muted = !SaveSystem.Muted;
+                if (!SaveSystem.Muted && SaveSystem.Volume <= 0.001f)
+                {
+                    SaveSystem.Volume = 0.5f;               // dinyalakan dari volume 0: beri nilai wajar
+                    volumeSlider.SetValueWithoutNotify(0.5f);
+                }
+                RefreshAudio();
+            });
+
+        RefreshAudio();
+
+        // semua panel tersembunyi di awal
+        pausePanel.SetActive(false);
+        winPanel.SetActive(false);
+        losePanel.SetActive(false);
+    }
+
+        void RefreshAudio()
+    {
+        SaveSystem.ApplyAudio();
+        bool off = SaveSystem.Muted || SaveSystem.Volume <= 0.001f;
+        if (soundIcon != null) soundIcon.sprite = off ? iconSoundOff : iconSoundOn;
     }
 
     void OnDestroy()
@@ -97,21 +106,10 @@ public class GameUI : MonoBehaviour
     {
         var cfg = game.CurrentConfig;
         var state = game.state;
-        bool inMenu = state == GameManager.State.Menu;
-        if (!inMenu) inLevelSelect = false;
 
-        hudGroup.SetActive(!inMenu);
-        mainMenuPanel.SetActive(inMenu && !inLevelSelect);
-        levelSelectPanel.SetActive(inMenu && inLevelSelect);
         pausePanel.SetActive(state == GameManager.State.Playing && game.IsPaused);
         winPanel.SetActive(state == GameManager.State.Won);
         losePanel.SetActive(state == GameManager.State.Lost);
-
-        if (inMenu)
-        {
-            if (inLevelSelect) UpdateLevelButtons();
-            return;
-        }
 
         levelText.text = $"Level {game.LevelNumber}/{game.LevelTotal}";
         pauseLevelText.text = $"Level {game.LevelNumber}";
@@ -131,24 +129,5 @@ public class GameUI : MonoBehaviour
             recipeText.text = cfg.recipe;
             nextButtonLabel.text = game.HasNextLevel ? "Level berikutnya" : "Pilih level";
         }
-    }
-
-    void UpdateLevelButtons()
-    {
-        for (int i = 0; i < levelButtons.Length; i++)
-        {
-            bool available = i < game.LevelTotal;               // level ini punya LevelConfig
-            bool unlocked = i <= SaveSystem.UnlockedLevel;      // sudah dibuka lewat progres
-            levelButtons[i].interactable = available && unlocked;
-        }
-    }
-
-    void Quit()
-    {
-#if UNITY_EDITOR
-        UnityEditor.EditorApplication.isPlaying = false;
-#else
-        Application.Quit();
-#endif
     }
 }
