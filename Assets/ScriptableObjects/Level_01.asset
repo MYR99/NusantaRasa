@@ -28,6 +28,17 @@ MonoBehaviour:
   maxSingles: 2
   trayCount: 3
   refreshes: 3
-  sotoName: Soto Kudus
-  composition: IDK
+  sotoName: Soto Jogja
+  composition: 'Kuah bening gurih. Suwiran ayam kampung
+
+    Soun
+
+    Kol
+
+    Tauge
+
+    Telur
+    rebus
+
+    Bawang goreng.'
   recipe: IDK

@@ -5,12 +5,15 @@ public class MainMenuUI : MonoBehaviour
 {
     public Button playButton;
     public Button quitButton;
+    public Button settingsButton;
+    public GameObject settingsPopup;
 
     void Awake()
     {
-        AudioListener.volume = SaveSystem.Volume;
         playButton.onClick.AddListener(() => SceneLoader.Load(SceneNames.LevelSelect));
         quitButton.onClick.AddListener(Quit);
+        settingsButton.onClick.AddListener(() => settingsPopup.SetActive(true));
+        settingsPopup.SetActive(false);
     }
 
     void Quit()

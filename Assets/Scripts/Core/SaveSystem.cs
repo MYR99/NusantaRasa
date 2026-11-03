@@ -3,10 +3,10 @@ using UnityEngine;
 public static class SaveSystem
 {
     const string UnlockedKey = "unlockedLevel";
-    const string VolumeKey = "volume";
-    const string MutedKey = "muted";
+    const string BgmKey = "bgmVolume";
+    const string SfxKey = "sfxVolume";
+    const string FullscreenKey = "fullscreen";
 
-    // indeks level global tertinggi yang sudah terbuka (0 = hanya level 1)
     public static int UnlockedLevel => PlayerPrefs.GetInt(UnlockedKey, 0);
 
     public static void Unlock(int index)
@@ -16,18 +16,21 @@ public static class SaveSystem
         PlayerPrefs.Save();
     }
 
-    public static float Volume
+    public static float BgmVolume
     {
-        get => PlayerPrefs.GetFloat(VolumeKey, 1f);
-        set => PlayerPrefs.SetFloat(VolumeKey, Mathf.Clamp01(value));
+        get => PlayerPrefs.GetFloat(BgmKey, 0.8f);
+        set => PlayerPrefs.SetFloat(BgmKey, Mathf.Clamp01(value));
     }
 
-    public static bool Muted
+    public static float SfxVolume
     {
-        get => PlayerPrefs.GetInt(MutedKey, 0) == 1;
-        set => PlayerPrefs.SetInt(MutedKey, value ? 1 : 0);
+        get => PlayerPrefs.GetFloat(SfxKey, 0.8f);
+        set => PlayerPrefs.SetFloat(SfxKey, Mathf.Clamp01(value));
     }
 
-    // terapkan pengaturan suara ke AudioListener
-    public static void ApplyAudio() => AudioListener.volume = Muted ? 0f : Volume;
+    public static bool Fullscreen
+    {
+        get => PlayerPrefs.GetInt(FullscreenKey, 1) == 1;
+        set => PlayerPrefs.SetInt(FullscreenKey, value ? 1 : 0);
+    }
 }

@@ -16,7 +16,7 @@ public static class StageCatalog
     {
         "Stage 1-3", "Stage 1-3", "Stage 1-3",
         "Stage 4-5", "Stage 4-5",
-        "Stage 6-7", "Stage 6-7",
+        "Stage 6",
     };
 
     public static int Count => scenes.Length;

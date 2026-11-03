@@ -10,8 +10,6 @@ public class LoadingScreen : MonoBehaviour
 
     IEnumerator Start()
     {
-        SaveSystem.ApplyAudio();
-
         AsyncOperation op = SceneManager.LoadSceneAsync(nextScene);
         op.allowSceneActivation = false;
 

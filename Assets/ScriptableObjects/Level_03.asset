@@ -32,6 +32,15 @@ MonoBehaviour:
   maxSingles: 0
   trayCount: 3
   refreshes: 3
-  sotoName: Soto Banjar
-  composition: IDK
+  sotoName: Soto Padang
+  composition: 'Kuah kaldu sapi berempah, tanpa santan.
+
+    Daging sapi goreng
+
+    Bihun
+
+    Perkedel
+    kentang
+
+    Kerupuk merah muda.'
   recipe: IDK

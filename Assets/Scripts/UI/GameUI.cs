@@ -8,7 +8,7 @@ public class GameUI : MonoBehaviour
 
     [Header("HUD")]
     public TMP_Text levelText;
-    public RectTransform progressFill;   // anak ProgressBar, anchor min (0,0) max (0,1)
+    public RectTransform progressFill;
     public TMP_Text progressText;
     public Button refreshButton;
     public TMP_Text refreshCountText;
@@ -16,15 +16,10 @@ public class GameUI : MonoBehaviour
 
     [Header("Panel Pause")]
     public GameObject pausePanel;
-    public TMP_Text pauseLevelText;      // teks di dalam CurrentLevel (BUKAN Title)
+    public TMP_Text pauseLevelText;
     public Button resumeButton;
     public Button pauseRestartButton;
     public Button pauseMainMenuButton;
-    public Slider volumeSlider;
-    public Button soundButton;       // objek "Sound" (ikon musik)
-    public Image soundIcon;           // Image pada objek yang sama
-    public Sprite iconSoundOn;
-    public Sprite iconSoundOff;
 
     [Header("Panel Menang")]
     public GameObject winPanel;
@@ -40,13 +35,11 @@ public class GameUI : MonoBehaviour
 
     void Awake()
     {
-        // pemeriksaan dasar: kalau salah satu hilang, UI tidak akan bisa diklik
         if (FindFirstObjectByType<UnityEngine.EventSystems.EventSystem>() == null)
             Debug.LogError("Tidak ada EventSystem di scene ini: UI tidak akan bisa diklik.");
         if (GetComponent<GraphicRaycaster>() == null)
             Debug.LogError("Canvas tidak punya Graphic Raycaster: UI tidak akan bisa diklik.");
 
-        // berlangganan di Awake supaya event pertama dari GameManager.Start tidak terlewat
         game.OnChanged += Redraw;
 
         refreshButton.onClick.AddListener(game.Refresh);
@@ -57,43 +50,9 @@ public class GameUI : MonoBehaviour
         nextButton.onClick.AddListener(game.NextLevel);
         retryButton.onClick.AddListener(game.StartLevel);
 
-                // suara
-        volumeSlider.minValue = 0f;
-        volumeSlider.maxValue = 1f;
-        volumeSlider.wholeNumbers = false;
-        volumeSlider.SetValueWithoutNotify(SaveSystem.Volume);
-        volumeSlider.onValueChanged.AddListener(v =>
-        {
-            SaveSystem.Volume = v;
-            if (v > 0.001f) SaveSystem.Muted = false;   // geser ke atas 0 = suara nyala lagi
-            RefreshAudio();
-        });
-
-        if (soundButton != null)
-            soundButton.onClick.AddListener(() =>
-            {
-                SaveSystem.Muted = !SaveSystem.Muted;
-                if (!SaveSystem.Muted && SaveSystem.Volume <= 0.001f)
-                {
-                    SaveSystem.Volume = 0.5f;               // dinyalakan dari volume 0: beri nilai wajar
-                    volumeSlider.SetValueWithoutNotify(0.5f);
-                }
-                RefreshAudio();
-            });
-
-        RefreshAudio();
-
-        // semua panel tersembunyi di awal
         pausePanel.SetActive(false);
         winPanel.SetActive(false);
         losePanel.SetActive(false);
-    }
-
-        void RefreshAudio()
-    {
-        SaveSystem.ApplyAudio();
-        bool off = SaveSystem.Muted || SaveSystem.Volume <= 0.001f;
-        if (soundIcon != null) soundIcon.sprite = off ? iconSoundOff : iconSoundOn;
     }
 
     void OnDestroy()

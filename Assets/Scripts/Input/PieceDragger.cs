@@ -65,6 +65,7 @@ public class PieceDragger : MonoBehaviour
             int step = PointerInput.RotateStep;
             if (step > 0) selected.RotateCW();
             else if (step < 0) selected.RotateCCW();
+            if (step != 0) AudioManager.Instance?.PlaySfx(AudioManager.Instance.rotate);
         }
 
         if (dragging) Drag();
@@ -123,8 +124,14 @@ public class PieceDragger : MonoBehaviour
     {
         dragging = false;
         if (validNow && board.Place(selected, anchorNow))
+        {
             Select(null);                                    // sudah ditaruh: batal pilih
+            AudioManager.Instance?.PlaySfx(AudioManager.Instance.place);
+        }
         else
+        {
             selected.transform.position = homePos;           // tidak valid: balik, tetap terpilih
+            AudioManager.Instance?.PlaySfx(AudioManager.Instance.invalid);
+        }
     }
 }
