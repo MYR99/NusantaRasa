@@ -25,13 +25,15 @@ public class GameUI : MonoBehaviour
     public GameObject winPanel;
     public TMP_Text sotoNameText;
     public TMP_Text compositionText;
-    public TMP_Text recipeText;
+    public SotoViewer sotoViewer;
     public Button nextButton;
     public TMP_Text nextButtonLabel;
 
     [Header("Panel Kalah")]
     public GameObject losePanel;
     public Button retryButton;
+
+    LevelConfig shownSoto;
 
     void Awake()
     {
@@ -85,8 +87,17 @@ public class GameUI : MonoBehaviour
         {
             sotoNameText.text = cfg.sotoName;
             compositionText.text = cfg.composition;
-            recipeText.text = cfg.recipe;
             nextButtonLabel.text = game.HasNextLevel ? "Level berikutnya" : "Pilih level";
+
+            if (shownSoto != cfg)               // Redraw bisa terpanggil berulang: tampilkan sekali saja
+            {
+                sotoViewer.Show(cfg.sotoPrefab);
+                shownSoto = cfg;
+            }
+        }
+        else if (state != GameManager.State.Won)
+        {
+            shownSoto = null;
         }
     }
 }

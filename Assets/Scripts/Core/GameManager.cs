@@ -62,6 +62,14 @@ public class GameManager : MonoBehaviour
     void Update()
     {
         if (PointerInput.PausePressed) TogglePause();
+    #if UNITY_EDITOR
+        // tombol uji: F9 langsung memenangkan level (hanya di editor)
+        if (PointerInput.DebugWinPressed && state == State.Playing)
+        {
+            state = State.Won;
+            OnChanged?.Invoke();
+        }
+    #endif
     }
 
     // ---------- alur game ----------

@@ -18,9 +18,9 @@ public class LevelConfig : ScriptableObject
 
     [Header("Soto (ditampilkan saat menang)")]
     public string sotoName;
+    public GameObject sotoPrefab;
     [TextArea(2, 6)] public string composition;
-    [TextArea(3, 10)] public string recipe;
-
+    
     void Reset() => ApplyDefaults();
 
     public void ApplyDefaults()

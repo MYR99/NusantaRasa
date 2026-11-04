@@ -9,7 +9,8 @@ public static class PointerInput
     public static bool DragPressed   => Input.GetMouseButtonDown(0);   // klik kiri: mulai drag
     public static bool DragReleased  => Input.GetMouseButtonUp(0);     // lepas klik kiri: jatuhkan
     public static bool PausePressed  => Input.GetKeyDown(KeyCode.Escape);
-
+    public static bool DebugWinPressed => Input.GetKeyDown(KeyCode.F9);
+    
     // +1 = searah jarum jam, -1 = berlawanan, 0 = tidak ada
     public static int RotateStep
     {

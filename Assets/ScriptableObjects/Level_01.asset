@@ -29,6 +29,7 @@ MonoBehaviour:
   trayCount: 3
   refreshes: 3
   sotoName: Soto Jogja
+  sotoPrefab: {fileID: 2196858125178328890, guid: 7be3191f362d9484b9ee7ead5ca50f30, type: 3}
   composition: 'Kuah bening gurih. Suwiran ayam kampung
 
     Soun
@@ -41,4 +42,3 @@ MonoBehaviour:
     rebus
 
     Bawang goreng.'
-  recipe: IDK

@@ -31,6 +31,7 @@ MonoBehaviour:
   trayCount: 3
   refreshes: 3
   sotoName: Soto Lamongan
+  sotoPrefab: {fileID: 9073369623615697407, guid: 20dce99935af4f447919c6677c01d54b, type: 3}
   composition: 'Ayam Suwir
 
     Soun/Bihun
@@ -46,4 +47,3 @@ MonoBehaviour:
 
     Koya (bubuk dari kerupuk udang dan bawang putih
     goreng)'
-  recipe: IDK
