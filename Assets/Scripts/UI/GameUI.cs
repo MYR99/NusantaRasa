@@ -37,6 +37,7 @@ public class GameUI : MonoBehaviour
 
     void Awake()
     {
+        if (game == null) game = FindFirstObjectByType<GameManager>();
         if (FindFirstObjectByType<UnityEngine.EventSystems.EventSystem>() == null)
             Debug.LogError("Tidak ada EventSystem di scene ini: UI tidak akan bisa diklik.");
         if (GetComponent<GraphicRaycaster>() == null)

@@ -1,0 +1,46 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 339bef4dc4d5ce144b0b74c98b078d98, type: 3}
+  m_Name: Level_05
+  m_EditorClassIdentifier: Assembly-CSharp::LevelConfig
+  width: 12
+  height: 12
+  cellX: 0.14
+  cellZ: 0.14
+  shapes:
+  - type: 2
+    weight: 1
+  - type: 3
+    weight: 2
+  - type: 1
+    weight: 1
+  - type: 4
+    weight: 1
+  - type: 6
+    weight: 3
+  - type: 5
+    weight: 1
+  maxSingles: 0
+  trayCount: 3
+  refreshes: 3
+  sotoName: Soto Kudus
+  sotoPrefab: {fileID: 260102134227470009, guid: af35a4c5f544036448a443698478cf17, type: 3}
+  composition: 'Kuah gurih berkaldu dalam mangkuk kecil.
+
+    Daging kerbau (atau
+    ayam)
+
+    Tauge
+
+    Seledri
+
+    Bawang putih goreng.'

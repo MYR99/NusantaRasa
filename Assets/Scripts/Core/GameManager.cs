@@ -33,11 +33,13 @@ public class GameManager : MonoBehaviour
         ? (float)board.FilledCount / board.TotalCells : 0f;
 
     GridBoard board;
+    int refreshesLeft;
+    float traySpacing = 3.5f;
+    float trayDepth = 3f;
     LevelConfig fallback, cfg;
     int levelIndex;                         // indeks lokal di scene ini
     Piece[] tray = new Piece[0];
     List<ShapeType> unseen = new List<ShapeType>();
-    int refreshesLeft;
 
     void Awake()
     {
@@ -90,6 +92,8 @@ public class GameManager : MonoBehaviour
             Destroy(p.gameObject);
 
         board.Configure(cfg.width, cfg.height, cfg.cellX, cfg.cellZ);
+        board.Configure(cfg.width, cfg.height, cfg.cellX, cfg.cellZ);
+        ComputeTray();
         refreshesLeft = cfg.refreshes;
         tray = new Piece[cfg.trayCount];
 
@@ -147,6 +151,16 @@ public class GameManager : MonoBehaviour
 
     // ---------- piece ----------
 
+    void ComputeTray()
+    {
+        int m = 1;
+        foreach (var sw in cfg.shapes)
+            foreach (var o in Shapes.Get(sw.type))
+                m = Mathf.Max(m, o.x + 1, o.y + 1);
+        traySpacing = Mathf.Max(3.5f, m + 0.5f);
+        trayDepth   = Mathf.Max(-trayZ, m * 0.5f + 1.5f);
+    }
+
     void DrawIntoSlot(int i)
     {
         if (unseen.Count == 0) { tray[i] = null; return; }
@@ -155,9 +169,9 @@ public class GameManager : MonoBehaviour
         unseen.RemoveAt(0);
 
         var go = new GameObject("Piece_" + type);
-        float cx = board.width * 0.5f + (i - (tray.Length - 1) * 0.5f) * 3.5f;
+        float cx = board.width * 0.5f + (i - (tray.Length - 1) * 0.5f) * traySpacing;
         go.transform.position = board.transform.TransformPoint(
-            new Vector3(cx * board.cellX, 0, trayZ * board.cellZ));
+            new Vector3(cx * board.cellX, 0, -trayDepth * board.cellZ));
 
         var p = go.AddComponent<Piece>();
         p.shape = type;
