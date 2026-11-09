@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::LevelConfig
   width: 17
   height: 17
-  cellX: 0.148
-  cellZ: 0.148
+  cellX: 0.141
+  cellZ: 0.136
   shapes:
   - type: 2
     weight: 1

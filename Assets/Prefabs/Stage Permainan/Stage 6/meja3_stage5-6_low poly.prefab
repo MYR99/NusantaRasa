@@ -52,6 +52,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: meja3_stage5-6_low poly
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 498603b6ce8b45c4eb177b0eecf1cc17, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
