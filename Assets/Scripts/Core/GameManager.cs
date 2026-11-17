@@ -218,6 +218,7 @@ public class GameManager : MonoBehaviour
         {
             state = State.Won;
             SaveSystem.Unlock(globalOffset + levelIndex + 1);   // buka level global berikutnya
+            AudioManager.Instance?.PlaySfx(AudioManager.Instance.win);
             return;
         }
 
@@ -233,7 +234,10 @@ public class GameManager : MonoBehaviour
         bool refreshUseful = refreshesLeft > 0 && unseen.Count > 0;
 
         if (!poolFits || (!visibleFits && !refreshUseful))
+        {
             state = State.Lost;
+            AudioManager.Instance?.PlaySfx(AudioManager.Instance.lose);
+        }
     }
 
     bool FitsAnywhere(ShapeType type)

@@ -85,8 +85,10 @@ public class AudioManager : MonoBehaviour
             Debug.LogWarning("Parameter SfxVol belum di-expose di AudioMixer.");
     }
 
-    public void PlaySfx(AudioClip clip)
+    public void PlaySfx(AudioClip clip, bool varyPitch = false)
     {
-        if (clip != null) sfxSource.PlayOneShot(clip);
+        if (clip == null) return;
+        sfxSource.pitch = varyPitch ? Random.Range(0.95f, 1.05f) : 1f;
+        sfxSource.PlayOneShot(clip);
     }
 }

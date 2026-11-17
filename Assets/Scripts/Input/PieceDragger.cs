@@ -125,13 +125,14 @@ public class PieceDragger : MonoBehaviour
         dragging = false;
         if (validNow && board.Place(selected, anchorNow))
         {
-            Select(null);                                    // sudah ditaruh: batal pilih
-            AudioManager.Instance?.PlaySfx(AudioManager.Instance.place);
+            Select(null);
+            if (GameManager.Instance != null &&
+                GameManager.Instance.state == GameManager.State.Playing)
+                AudioManager.Instance?.PlaySfx(AudioManager.Instance.place, true);
         }
         else
         {
-            selected.transform.position = homePos;           // tidak valid: balik, tetap terpilih
-            AudioManager.Instance?.PlaySfx(AudioManager.Instance.invalid);
+            selected.transform.position = homePos;
         }
     }
 }

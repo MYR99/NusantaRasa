@@ -1,6 +1,5 @@
 using UnityEngine;
 
-// Satu-satunya tempat yang membaca Input.
 public static class PointerInput
 {
     public static Vector2 Position => Input.mousePosition;
@@ -10,6 +9,7 @@ public static class PointerInput
     public static bool DragReleased  => Input.GetMouseButtonUp(0);     // lepas klik kiri: jatuhkan
     public static bool PausePressed  => Input.GetKeyDown(KeyCode.Escape);
     public static bool DebugWinPressed => Input.GetKeyDown(KeyCode.F9);
+    public static bool DebugLosePressed => Input.GetKeyDown(KeyCode.F10);
     
     // +1 = searah jarum jam, -1 = berlawanan, 0 = tidak ada
     public static int RotateStep

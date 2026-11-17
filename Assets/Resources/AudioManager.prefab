@@ -338,13 +338,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::AudioManager
   menuBgm: {fileID: 8300000, guid: 3231da856c9cacb45ad3a3d1b676a34e, type: 3}
   gameBgm: {fileID: 8300000, guid: 07151900d6e9fcc4088157411e8d96dc, type: 3}
-  click: {fileID: 0}
-  place: {fileID: 0}
-  invalid: {fileID: 0}
-  rotate: {fileID: 0}
-  refresh: {fileID: 0}
-  win: {fileID: 0}
-  lose: {fileID: 0}
+  click: {fileID: 8300000, guid: 7901c90a6e0cf50499c0007c0e347ccd, type: 3}
+  place: {fileID: 8300000, guid: c64aa8c4a13f9254980071e2298e9b7d, type: 3}
+  invalid: {fileID: 8300000, guid: 7901c90a6e0cf50499c0007c0e347ccd, type: 3}
+  rotate: {fileID: 8300000, guid: 7901c90a6e0cf50499c0007c0e347ccd, type: 3}
+  refresh: {fileID: 8300000, guid: 7901c90a6e0cf50499c0007c0e347ccd, type: 3}
+  win: {fileID: 8300000, guid: 22222b7d61df19447b85bd8a5317870a, type: 3}
+  lose: {fileID: 8300000, guid: b5a2dc343aaa3d54994dc4e14634e235, type: 3}
   mixer: {fileID: 24100000, guid: 7d24f7e9829095347b1e32fba4df6765, type: 2}
   bgmSource: {fileID: 5094971651708705696}
   sfxSource: {fileID: 1940758516984183050}
