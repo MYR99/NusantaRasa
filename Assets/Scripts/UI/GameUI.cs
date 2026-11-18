@@ -33,6 +33,11 @@ public class GameUI : MonoBehaviour
     public GameObject losePanel;
     public Button retryButton;
 
+    [Header("Panel How to Play")]
+    public Button helpButton;
+    public GameObject helpPanel;
+    public Button helpCloseButton;
+
     LevelConfig shownSoto;
 
     void Awake()
@@ -52,6 +57,10 @@ public class GameUI : MonoBehaviour
         pauseMainMenuButton.onClick.AddListener(game.ReturnToMenu);
         nextButton.onClick.AddListener(game.NextLevel);
         retryButton.onClick.AddListener(game.StartLevel);
+
+        if (helpButton != null)      helpButton.onClick.AddListener(() => game.SetHelp(true));
+        if (helpCloseButton != null) helpCloseButton.onClick.AddListener(() => game.SetHelp(false));
+        if (helpPanel != null)       helpPanel.SetActive(false);
 
         pausePanel.SetActive(false);
         winPanel.SetActive(false);
@@ -80,9 +89,14 @@ public class GameUI : MonoBehaviour
         progressFill.anchorMax = new Vector2(p, 1f);
         progressText.text = Mathf.RoundToInt(p * 100f) + "%";
 
+        helpPanel?.SetActive(state == GameManager.State.Playing && game.HelpOpen);
+        
         refreshCountText.text = game.RefreshesLeft.ToString();
+        refreshCountText.gameObject.SetActive(game.RefreshAvailable);
         refreshButton.interactable = game.CanRefresh;
-        pauseButton.interactable = state == GameManager.State.Playing;
+        pauseButton.interactable = state == GameManager.State.Playing && !game.HelpOpen;
+        if (helpButton != null)
+            helpButton.interactable = state == GameManager.State.Playing && !game.IsPaused;
 
         if (state == GameManager.State.Won && cfg != null)
         {

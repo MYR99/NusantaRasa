@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 public class GameManager : MonoBehaviour
 {
@@ -18,7 +19,8 @@ public class GameManager : MonoBehaviour
 
     public State state { get; private set; } = State.Menu;
     public bool IsPaused { get; private set; }
-    public bool Playing => state == State.Playing && !IsPaused;
+    public bool HelpOpen { get; private set; }
+    public bool Playing => state == State.Playing && !IsPaused && !HelpOpen;
 
     // untuk UI
     public event System.Action OnChanged;
@@ -28,7 +30,9 @@ public class GameManager : MonoBehaviour
     public bool HasNextLevel =>
         levelIndex + 1 < levels.Count || StageCatalog.IsAvailable(globalOffset + levelIndex + 1);
     public int RefreshesLeft => refreshesLeft;
-    public bool CanRefresh => Playing && refreshesLeft > 0 && unseen.Count > 0;
+    public int UnseenCount => unseen.Count;
+    public bool RefreshAvailable => refreshesLeft > 0 && HasRefreshChoice();
+    public bool CanRefresh => Playing && RefreshAvailable;
     public float Progress => board != null && board.TotalCells > 0
         ? (float)board.FilledCount / board.TotalCells : 0f;
 
@@ -47,6 +51,7 @@ public class GameManager : MonoBehaviour
         board = GetComponent<GridBoard>();
         fallback = LevelConfig.CreateDefault();
         cfg = levels.Count > 0 ? levels[0] : fallback;
+        board.Configure(cfg.width, cfg.height, cfg.cellX, cfg.cellZ);
     }
 
     void Start()
@@ -63,15 +68,19 @@ public class GameManager : MonoBehaviour
 
     void Update()
     {
-        if (PointerInput.PausePressed) TogglePause();
-    #if UNITY_EDITOR
-        // tombol uji: F9 langsung memenangkan level (hanya di editor)
-        if (PointerInput.DebugWinPressed && state == State.Playing)
+        if (PointerInput.PausePressed)
         {
-            state = State.Won;
-            OnChanged?.Invoke();
+            if (HelpOpen) SetHelp(false);
+            else TogglePause();
         }
-    #endif
+    }
+
+    public void SetHelp(bool open)
+    {
+        if (HelpOpen == open) return;
+        if (open && (state != State.Playing || IsPaused)) return;
+        HelpOpen = open;
+        OnChanged?.Invoke();
     }
 
     // ---------- alur game ----------
@@ -143,6 +152,7 @@ public class GameManager : MonoBehaviour
     public void SetPaused(bool paused)
     {
         if (state != State.Playing || IsPaused == paused) return;
+        if (paused && HelpOpen) return;
         IsPaused = paused;
         OnChanged?.Invoke();
     }
@@ -191,10 +201,22 @@ public class GameManager : MonoBehaviour
         OnChanged?.Invoke();
     }
 
+    bool HasRefreshChoice()
+    {
+        if (unseen.Count == 0) return false;
+        var types = new HashSet<ShapeType>(unseen);
+        foreach (var t in tray) if (t != null) types.Add(t.shape);
+        return types.Count > 1;   // pool satu jenis = tidak mungkin berubah
+    }
+
     public void Refresh()
     {
         if (!CanRefresh) return;
         refreshesLeft--;
+
+        var before = new List<ShapeType>();
+        foreach (var t in tray) if (t != null) before.Add(t.shape);
+        before.Sort();
 
         for (int i = 0; i < tray.Length; i++)
         {
@@ -203,9 +225,17 @@ public class GameManager : MonoBehaviour
             Destroy(tray[i].gameObject);
             tray[i] = null;
         }
-        LevelGenerator.Shuffle(unseen);
-        for (int i = 0; i < tray.Length; i++) DrawIntoSlot(i);
 
+        // acak ulang sampai tray baru berbeda dari yang lama
+        for (int k = 0; k < 20; k++)
+        {
+            LevelGenerator.Shuffle(unseen);
+            var next = unseen.GetRange(0, Mathf.Min(tray.Length, unseen.Count));
+            next.Sort();
+            if (!next.SequenceEqual(before)) break;
+        }
+
+        for (int i = 0; i < tray.Length; i++) DrawIntoSlot(i);
         CheckState();
         OnChanged?.Invoke();
     }
